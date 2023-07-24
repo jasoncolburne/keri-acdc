@@ -182,42 +182,42 @@ pub trait KeriStore {
     fn count_establishment_events(&self, pre: &str) -> Result<usize>;
 }
 
-pub fn saidify(sad: &str, label: Option<&str>, anonymize: Option<bool>) -> Result<String> {
+pub fn saidify(sad: &str, label: Option<&str>, privatize: Option<bool>) -> Result<String> {
     let value: serde_json::Value = serde_json::from_str(sad)?;
     let mut sad = Value::from(&value);
-    crate::keri::saidify_value(&mut sad, label, anonymize, Some(false))?;
+    crate::keri::saidify_value(&mut sad, label, privatize, Some(false))?;
     sad.to_json()
 }
 
 pub fn saidify_value(
     sad: &mut Value,
     label: Option<&str>,
-    anonymize: Option<bool>,
+    privatize: Option<bool>,
     overwrite: Option<bool>,
 ) -> Result<(Value, bool)> {
-    let anonymize = anonymize.unwrap_or(false);
+    let privatize = privatize.unwrap_or(false);
     let label = label.unwrap_or(Ids::d);
     let overwrite = overwrite.unwrap_or(false);
 
-    let mut anonymizations: Vec<bool> = vec![];
-    let mut anonymized;
+    let mut privatizations: Vec<bool> = vec![];
+    let mut privatized;
 
     if sad.to_vec().is_ok() {
         for (index, val) in sad.to_vec()?.iter_mut().enumerate() {
-            (sad[index], anonymized) =
-                saidify_value(val, Some(label), Some(anonymize), Some(overwrite))?;
-            anonymizations.push(anonymized)
+            (sad[index], privatized) =
+                saidify_value(val, Some(label), Some(privatize), Some(overwrite))?;
+            privatizations.push(privatized)
         }
     } else if sad.to_map().is_ok() {
         for (key, val) in sad.to_map()?.iter_mut() {
-            (sad[key.as_str()], anonymized) =
-                saidify_value(val, Some(label), Some(anonymize), Some(overwrite))?;
-            anonymizations.push(anonymized)
+            (sad[key.as_str()], privatized) =
+                saidify_value(val, Some(label), Some(privatize), Some(overwrite))?;
+            privatizations.push(privatized)
         }
     }
 
     // the name matched so we are reusing this mutable variable
-    anonymized = false;
+    privatized = false;
     let map_result = sad.to_map();
     if map_result.is_ok() {
         let map = map_result?;
@@ -225,14 +225,14 @@ pub fn saidify_value(
             && map[label].to_string().is_ok()
             && (overwrite || map[label].to_string()?.is_empty())
         {
-            if anonymize && !anonymizations.iter().any(|v| *v) {
+            if privatize && !privatizations.iter().any(|v| *v) {
                 sad["u"] = dat!(&Salter::new_with_defaults(None)?.qb64()?);
-                anonymized = true;
+                privatized = true;
             }
             let saider = Saider::new_with_sad(sad, Some(label), None, None, None)?;
             sad[label] = dat!(&saider.qb64()?);
         }
     }
 
-    Ok((sad.clone(), anonymized))
+    Ok((sad.clone(), privatized))
 }
