@@ -5,7 +5,6 @@ use cesride::{
     Creder, Matter, Saider, Salter,
 };
 
-#[allow(dead_code)]
 #[allow(clippy::too_many_arguments)]
 pub(crate) fn create(
     schema: &str,

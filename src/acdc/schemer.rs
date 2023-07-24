@@ -99,12 +99,10 @@ pub(crate) fn schema_cache() -> &'static mut SchemaCache {
     }
 }
 
-#[allow(dead_code)]
 pub struct SchemerCache {
     map: RwLock<HashMap<String, Schemer>>,
 }
 
-#[allow(dead_code)]
 impl SchemerCache {
     fn map(&self) -> RwLockReadGuard<HashMap<String, Schemer>> {
         self.map.read()
@@ -131,7 +129,6 @@ impl SchemerCache {
     }
 }
 
-#[allow(dead_code)]
 pub fn cache() -> &'static mut SchemerCache {
     static mut CACHE: std::mem::MaybeUninit<SchemerCache> = std::mem::MaybeUninit::uninit();
     static ONCE: std::sync::Once = std::sync::Once::new();
@@ -156,7 +153,6 @@ pub struct Schemer {
     saider: Saider,
 }
 
-#[allow(dead_code)]
 impl Schemer {
     pub fn new(
         raw: Option<&[u8]>,
@@ -242,27 +238,27 @@ impl Schemer {
         Ok((raw, sed, kind.to_string(), saider))
     }
 
-    pub(crate) fn raw(&self) -> Vec<u8> {
+    pub fn raw(&self) -> Vec<u8> {
         self.raw.clone()
     }
 
-    pub(crate) fn sed(&self) -> Value {
+    pub fn sed(&self) -> Value {
         self.sed.clone()
     }
 
-    pub(crate) fn kind(&self) -> String {
+    pub fn kind(&self) -> String {
         self.kind.clone()
     }
 
-    pub(crate) fn said(&self) -> Result<String> {
+    pub fn said(&self) -> Result<String> {
         self.saider.qb64()
     }
 
-    pub(crate) fn saider(&self) -> Saider {
+    pub fn saider(&self) -> Saider {
         self.saider.clone()
     }
 
-    pub(crate) fn verify(&self, raw: &[u8]) -> Result<bool> {
+    pub fn verify(&self, raw: &[u8]) -> Result<bool> {
         schema_cache().validate(&self.said()?, std::str::from_utf8(raw)?)
     }
 }
