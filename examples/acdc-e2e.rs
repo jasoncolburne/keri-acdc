@@ -352,10 +352,10 @@ struct Vault {
 impl Vault {
     pub fn new() -> Result<(Self, String)> {
         let (aid, keys, icp) = keri::kmi::incept(
+            Some(cesride::matter::Codex::CRYSTALS_Dilithium3_Seed),
             None,
             None,
-            None,
-            None,
+            Some(cesride::matter::Codex::CRYSTALS_Dilithium3_Seed),
             None,
             None,
             None,

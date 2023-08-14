@@ -8,10 +8,10 @@ edition = "2021"
 [dependencies]
 anyhow = { version = "~1", features = ["backtrace"] }
 boon = "~0.5"
-cesride = "~0.6"
+cesride = { git = "https://github.com/jasoncolburne/cesride", rev = "b1186c0" }
 chrono = { version = "~0.4", default-features = false, features = ["clock"] }
 parking_lot = "~0.12"
-parside = "~0.2"
+parside = { git = "https://github.com/jasoncolburne/parside", rev = "5076660" }
 serde = "~1"
 serde_json = "~1"
 thiserror = "~1"
